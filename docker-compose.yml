@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: dartfrog_backend
+      POSTGRES_DB: pokemon_tcg
     volumes:
       - ./data:/var/lib/postgresql/data
     ports:
@@ -13,7 +13,7 @@ services:
   cards-database:
     image: cards-database
     build:
-      context: backend
+      context: .
       dockerfile: ./deps/cards-database/Dockerfile
     restart: always
     ports:
