@@ -1,23 +1,18 @@
+import 'package:shelf_backend/db/connect.dart';
+import 'package:shelf_backend/db/migrate.dart';
+import 'package:shelf_backend/routes/hello.dart' as hello_router;
 import 'package:shelf_router/shelf_router.dart';
-import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
-
-
-void addRoutes(Router app) {
-  app.get('/hello', (Request request) {
-    return Response.ok('hello-world');
-  });
-
-  app.get('/user/<user>', (Request request, String user) {
-    return Response.ok('hello $user');
-  });
-}
-
 
 Future<void> serve() async {
   var app = Router();
-  addRoutes(app);
+  var conn = await connectToPostgres();
 
-  var server = await io.serve(app, 'localhost', 8080);
+  migrate(conn);
+  hello_router.addRoutes(app, conn);
+  
+
+  var server = await io.serve(app.call, 'localhost', 8080);
   print('Serving at http://${server.address.host}:${server.port}');
 }
+
