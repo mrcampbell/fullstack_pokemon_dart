@@ -1,40 +1,59 @@
 // lib/authenticator.dart
 
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, lines_longer_than_80_chars
 
 import 'package:dartfrog_backend/user.dart';
+import 'package:postgres/postgres.dart';
+import 'package:uuid/uuid.dart';
 
 class Authenticator {
-  static const _users = {
-    'john': User(
-      id: '1',
-      name: 'John',
-      password: '123',
-    ),
-    'jack': User(
-      id: '2',
-      name: 'Jack',
-      password: '321',
-    ),
-  };
 
-  static const _passwords = {
-    // ⚠️ Never store user's password in plain text, these values are in plain text
-    // just for the sake of the tutorial.
-    'john': '123',
-    'jack': '321',
-  };
+  Authenticator(this.client);
+  
+  Connection client;
 
-  User? findByUsernameAndPassword({
+  Future<AuthenticatedUser?> registerUser({
     required String username,
     required String password,
-  }) {
-    final user = _users[username];
-
-    if (user != null && _passwords[username] == password) {
-      return user;
+  }) async {
+    const uuid = Uuid();
+    final result = await client.execute(
+      r'INSERT INTO user (id, username, password_hash) VALUES ($1, $2, $3) returning id', 
+    parameters: [uuid.v4(), username, '${password}hash'],);
+    if (result.length == 1) {
+      return AuthenticatedUser(
+        id: result[0][0]! as String,
+        name: username,
+        token: username,
+      );
     }
 
     return null;
+  }
+
+// Future<AuthenticatedUser?> findByUsernameAndPassword({
+//     required PrismaClient client,
+//     required String username,
+//     required String password,
+//   }) async {
+//     final user = await client.user.findFirst(
+//       where: UserWhereInput(
+//         username: PrismaUnion.$1(StringFilter(
+//           equals: PrismaUnion.$1(username),
+//         ),),
+//       ),);
+
+//     if (user != null && user.passwordHash == '${password}hash') {
+//       return AuthenticatedUser(
+//         id: user.id!,
+//         name: user.username!,
+//         token: 'token',
+//       );
+//     }
+//     return null;
+//   }
+
+  bool verifyToken(String token, String username) {
+    return token == username;
   }
 }
