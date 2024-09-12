@@ -1,3 +1,4 @@
+import 'package:shelf_backend/cards_client/cards_client.dart';
 import 'package:shelf_backend/db/connect.dart';
 import 'package:shelf_backend/db/migrate.dart';
 import 'package:shelf_backend/routes/hello.dart' as hello_router;
@@ -10,7 +11,9 @@ Future<void> serve() async {
 
   migrate(conn);
   hello_router.addRoutes(app, conn);
-  
+
+  var card = await getCard("swsh3-136");
+  print(card);
 
   var server = await io.serve(app.call, 'localhost', 8080);
   print('Serving at http://${server.address.host}:${server.port}');
