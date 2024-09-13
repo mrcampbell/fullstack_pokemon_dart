@@ -13,9 +13,9 @@ Future<Card> getCard(String id) async {
   return card;
 }
 
-Future<String> getCardJSON(String id) async {
+Future<Map<String, dynamic>> getCardJSON(String id) async {
   var response = await http.get(Uri.parse('http://localhost:3000/v2/en/cards/$id'));
-  return response.body;
+  return json.decode(response.body);
 }
 
 Future<List<CardSummary>> searchCard(String term) async {

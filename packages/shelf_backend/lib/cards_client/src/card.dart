@@ -47,13 +47,17 @@ class Card {
     @override
   String toString() {
     // TODO: implement toString
-    return "Card: $name";
+    return this.toJson().toString();
   }
 
   Card.fromJson(Map<String, dynamic> json) {
     if (json['type'] == 'https://tcgdex.dev/errors/not-found') {
       throw Exception("Card with ID not found");
     }
+
+   if (!json.containsKey('category')) {
+      throw Exception("Card with ID not found");
+   }
 
     category = json['category'];
     id = json['id'];

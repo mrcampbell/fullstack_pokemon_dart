@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-void saveImage(String url, String quality, String cardID) async {
-  downloadImage("$url/$quality.png", "/Users/mike/Projects/dart/fullstack_pokemon/deps/card-images/$cardID.png");
+Future<void> saveImage(String url, String quality, String cardID) async {
+  await downloadImage("$url/$quality.png", "/Users/mike/Projects/dart/fullstack_pokemon/deps/card-images/$cardID.png");
 }
 
-void downloadImage(String url, String outputPath) async {
+Future<void> downloadImage(String url, String outputPath) async {
   final response = await HttpClient().getUrl(Uri.parse(url));
   final file = File(outputPath);
   final downloadedImage = await response.close();
