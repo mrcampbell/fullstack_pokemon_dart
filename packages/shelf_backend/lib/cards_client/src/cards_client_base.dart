@@ -13,6 +13,11 @@ Future<Card> getCard(String id) async {
   return card;
 }
 
+Future<String> getCardJSON(String id) async {
+  var response = await http.get(Uri.parse('http://localhost:3000/v2/en/cards/$id'));
+  return response.body;
+}
+
 Future<List<CardSummary>> searchCard(String term) async {
   var response = await http.get(Uri.parse('http://localhost:3000/v2/en/cards?name=$term'));
   var payload = json.decode(response.body);
